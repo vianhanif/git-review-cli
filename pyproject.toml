@@ -25,9 +25,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/alvian/git-review-cli"
-Repository = "https://github.com/alvian/git-review-cli"
-Issues = "https://github.com/alvian/git-review-cli/issues"
+Homepage = "https://github.com/vianhanif/git-review-cli"
+Repository = "https://github.com/vianhanif/git-review-cli"
+Issues = "https://github.com/vianhanif/git-review-cli/issues"
 
 [project.scripts]
 git-review-cli = "git_review_cli.cli:main"
