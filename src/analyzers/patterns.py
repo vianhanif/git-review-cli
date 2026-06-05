@@ -25,10 +25,10 @@ def analyze_patterns(diff_data: list[dict]) -> dict:
 
     for f in diff_data:
         filepath = f.get("new_path", f.get("old_path", "?"))
-        additions = f.get("additions", 0) or (
+        additions = f["additions"] if f.get("additions") is not None else (
             f.get("diff", "").count("\n+") if f.get("diff") else 0
         )
-        deletions = f.get("deletions", 0) or (
+        deletions = f["deletions"] if f.get("deletions") is not None else (
             f.get("diff", "").count("\n-") if f.get("diff") else 0
         )
         total = additions + deletions

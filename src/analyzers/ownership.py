@@ -17,7 +17,7 @@ def get_mr_touched_files(
     cb_r = run_in_project(project_dir, ["git", "branch", "--show-current"])
     if cb_r.returncode == 0:
         current_branch = cb_r.stdout.strip()
-    range_ref = "HEAD" if current_branch or current_branch == branch else branch
+    range_ref = "HEAD" if current_branch == branch else branch
 
     r = run_in_project(
         project_dir,

@@ -1,9 +1,20 @@
-import os
 from typing import Optional
 
 from src.analyzers.ownership import check_file_ownership
-from src.analyzers.patterns import is_excluded, CONFIG_PATTERNS
+from src.analyzers.patterns import is_excluded
 from .base import BaseFormatter
+
+
+def _count_additions(f: dict) -> int:
+    if f.get("additions") is not None:
+        return f["additions"]
+    return f.get("diff", "").count("\n+") if f.get("diff") else 0
+
+
+def _count_deletions(f: dict) -> int:
+    if f.get("deletions") is not None:
+        return f["deletions"]
+    return f.get("diff", "").count("\n-") if f.get("diff") else 0
 
 
 def _format_mr_info(info: dict) -> str:
@@ -67,8 +78,8 @@ def _format_changed_files(
 
     for f in diff_data:
         filepath = f.get("new_path", f.get("old_path", "?"))
-        additions = f.get("additions", 0) or (f.get("diff", "").count("\n+") if f.get("diff") else 0)
-        deletions = f.get("deletions", 0) or (f.get("diff", "").count("\n-") if f.get("diff") else 0)
+        additions = _count_additions(f)
+        deletions = _count_deletions(f)
         new_file = f.get("new_file", False)
         deleted_file = f.get("deleted_file", False)
         renamed_file = f.get("renamed_file", False)

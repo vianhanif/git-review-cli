@@ -5,6 +5,19 @@ Review GitLab merge requests from the command line.
 Fetches MR metadata, diffs, commits, and notes via the `glab` CLI, performs
 file ownership verification, and outputs structured markdown or JSON.
 
+## Why not just `glab`?
+
+| Raw `glab` | `git-review-cli` |
+|---|---|
+| 4+ commands to gather MR context | Single command |
+| Raw JSON diffs, hard to scan | Structured markdown table |
+| All files in diff treated equally | Ownership: MR commits vs branch drift |
+| Lockfiles, binaries clutter the view | Auto-excluded noise files |
+| No analysis | Deep mode: large changes, configs, missing tests |
+| Full URL required every time | Shorthand: `git-review-cli 123` |
+| Must manually checkout branch | Auto-checkout MR branch locally |
+| Separate `glab mr note` for reviews | `--post` writes + posts in one step |
+
 ## Architecture
 
 ```
@@ -19,23 +32,6 @@ src/
 │   ├── markdown.py     # Full / caveman markdown
 │   └── json.py         # Machine-readable JSON
 ├── analyzers/          # Analysis plugins
-│   ├── base.py         # Abstract analyzer interface
-│   ├── ownership.py    # File ownership verification
-│   └── patterns.py     # Pattern-based findings
-└── __version__.py
-```
-├── src/                 # Package source
-│   ├── cli.py           # CLI entry point
-├── git.py              # Shared git operations
-├── providers/          # Code forge backends
-│   ├── base.py         # Abstract provider interface
-│   └── gitlab.py       # GitLab via glab CLI
-├── formatters/         # Output plugins
-│   ├── base.py         # Abstract formatter interface
-│   ├── markdown.py     # Full / caveman markdown
-│   └── json.py         # Machine-readable JSON
-├── analyzers/          # Analysis plugins
-│   ├── base.py         # Abstract analyzer interface
 │   ├── ownership.py    # File ownership verification
 │   └── patterns.py     # Pattern-based findings
 └── __version__.py

@@ -14,7 +14,7 @@ from src.analyzers.patterns import analyze_patterns
 from src.formatters.markdown import MarkdownFormatter
 from src.formatters.json import JsonFormatter
 
-__version__ = "1.0.0"
+from src.__version__ import __version__
 
 URL_PATTERN = re.compile(
     r"^https?://gitlab\.com/(.+?)/-/merge_requests/(\d+)(?:/.*)?$"

@@ -43,10 +43,12 @@ class JsonFormatter(BaseFormatter):
                     {
                         "path": f.get("new_path", f.get("old_path")),
                         "additions": (
-                            f.get("diff", "").count("\n+") if f.get("diff") else 0
+                            f["additions"] if f.get("additions") is not None
+                            else (f.get("diff", "").count("\n+") if f.get("diff") else 0)
                         ),
                         "deletions": (
-                            f.get("diff", "").count("\n-") if f.get("diff") else 0
+                            f["deletions"] if f.get("deletions") is not None
+                            else (f.get("diff", "").count("\n-") if f.get("diff") else 0)
                         ),
                         "new_file": f.get("new_file", False),
                         "deleted_file": f.get("deleted_file", False),
