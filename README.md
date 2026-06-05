@@ -1,23 +1,87 @@
 # git-review-cli
 
-Review GitLab merge requests from the command line.
+Provider-agnostic code review toolkit. Gathers merge/pull request data, verifies
+file ownership, runs analysis, and outputs structured reports — all from the CLI.
 
-Fetches MR metadata, diffs, commits, and notes via the `glab` CLI, performs
-file ownership verification, and outputs structured markdown or JSON.
+## Providers
 
-## Why not just `glab`?
+| Provider | Status | Backend |
+|----------|--------|---------|
+| GitLab | Implemented | `glab` CLI |
+| GitHub | Planned | `gh` CLI |
 
-| Raw `glab` | `git-review-cli` |
+Currently implemented: **GitLab**. The provider/formatter/analyzer architecture
+makes adding new forges straightforward — one file implementing `BaseProvider`.
+
+## Why not just the native CLI?
+
+The same workflow applies regardless of provider. Compared to running raw
+`glab`/`gh` commands:
+
+| Raw CLI | `git-review-cli` |
 |---|---|
-| 4+ commands to gather MR context | Single command |
+| 4+ commands to gather MR/PR context | Single command |
 | Raw JSON diffs, hard to scan | Structured markdown table |
 | All files in diff treated equally | Ownership: MR commits vs branch drift |
 | Lockfiles, binaries clutter the view | Auto-excluded noise files |
 | No analysis | Deep mode: large changes, configs, missing tests |
 | Full URL required every time | Shorthand: `git-review-cli 123` |
-| Must manually checkout branch | Auto-checkout MR branch locally |
-| Separate `glab mr note` for reviews | `--post` writes + posts in one step |
+| Must manually checkout branch | Auto-checkout branch locally |
+| Separate commands for notes | `--post` writes + posts in one step |
 
+### Before: raw `glab` output
+
+```bash
+$ glab api projects/org%2Frepo/merge_requests/123/diffs --paginate
+```
+```json
+[{"old_path":"src/api/handler.go","new_path":"src/api/handler.go",
+  "diff":"@@ -12,7 +12,9 @@ func ...\n-  old code\n+  new code\n...
+  "new_file":false,"renamed_file":false,"deleted_file":false},
+ {"old_path":"package-lock.json","new_path":"package-lock.json",
+  "diff":"@@ -1,500 +1,520 @@ ...",
+  "new_file":false,...}]
+```
+Hard to scan. Manual cross-reference with `glab api .../commits` to check ownership. 
+Lockfiles and noise mixed in.
+
+### After: `git-review-cli` output
+
+```bash
+$ git-review-cli https://gitlab.com/org/repo/-/merge_requests/123
+```
+
+```markdown
+# MR !123 — Add healthcheck endpoint
+
+- **Author:** Jane Doe
+- **State:** opened
+- **Source branch:** `feat/healthcheck`
+- **Target branch:** `main`
+
+### Description
+Adds a /health endpoint with DB ping.
+
+## Commits
+
+- `a1b2c3d4` Add healthcheck handler (Jane Doe)
+
+## Changed Files
+
+| File | Changes | Owned by MR |
+|------|---------|-------------|
+| `src/api/handler.go (new)` | +45/-0 | ✅ 1 commit(s) |
+| `src/api/handler_test.go (new)` | +30/-0 | ✅ 1 commit(s) |
+| `package-lock.json` | +520/-500 | 🚫 excluded |
+
+_3 files: 2 owned, 0 not owned, 1 excluded_
+
+## Existing Comments
+
+_2 non-system comments on MR_
+```
+
+One command. Clean table. Ownership verified. Noise filtered.
 ## Architecture
 
 ```
@@ -116,11 +180,26 @@ The default markdown output includes:
 
 ## Planned
 
-- [ ] GitHub provider (`gh` CLI)
-- [ ] Bitbucket provider
-- [ ] Rich terminal output formatter
-- [ ] Config file for project base paths
-- [ ] Pre-commit hook integration
+- [ ] **GitHub provider** — `gh` CLI backend. Implements `BaseProvider` to fetch PR
+  metadata, diffs, commits, and reviews. All existing formatters, analyzers, and
+  CLI flags work unchanged. Estimated: ~80 lines of new code.
+
+- [ ] **Unified CLI** — auto-detect forge from remote URL or git config.
+  `git-review-cli 123` works from any repo without `--provider` flag, regardless
+  of whether it's hosted on GitLab or GitHub.
+
+- [ ] **Rich terminal output** — `--rich` flag renders the report directly in the
+  terminal with colored tables, dimmed metadata, and syntax-highlighted diff
+  snippets. Useful for quick reviews without leaving the shell.
+
+- [ ] **Config file** — `~/.config/git-review-cli/config.yaml` for user defaults:
+  projects base path (currently hardcoded to `~/Documents/alvian/`), default
+  base branch, excluded file patterns, preferred formatter, and provider
+  preferences.
+
+- [ ] **Pre-commit hook** — `.pre-commit-hooks.yaml` integration. Runs ownership
+  check before commit, warns on large diffs with no tests, and blocks commits
+  that modify both source and config files without review notes.
 
 ## License
 
