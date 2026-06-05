@@ -71,7 +71,9 @@ jobs:
       - name: Generate Allure Report
         run: |
           ./allure-2.33.0/bin/allure generate allure-results/ -o allure-report --clean
-          cp -r allure-history/* allure-report/history/
+          if ls allure-history/*/ >/dev/null 2>&1; then
+            cp -r allure-history/* allure-report/history/
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
