@@ -213,18 +213,6 @@ The default markdown output includes:
 - [ ] **GitHub provider** — `gh` CLI backend. Implements `BaseProvider` to fetch PR
   metadata, diffs, commits, and reviews. All existing formatters, analyzers, and
   CLI flags work unchanged. Estimated: ~80 lines of new code.
-- [ ] **Rich terminal output** — `--rich` flag renders the report directly in the
-  terminal with colored tables, dimmed metadata, and syntax-highlighted diff
-  snippets. Useful for quick reviews without leaving the shell.
-
-- [ ] **Config file** — `~/.config/git-review-cli/config.yaml` for user defaults:
-  projects base path (defaults to current directory), default
-  base branch, excluded file patterns, preferred formatter, and provider
-  preferences.
-
-- [ ] **Pre-commit hook** — `.pre-commit-hooks.yaml` integration. Runs ownership
-  check before commit, warns on large diffs with no tests, and blocks commits
-  that modify both source and config files without review notes.
 
 ## License
 

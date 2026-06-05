@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -29,6 +30,23 @@ def _glab(args: list[str], timeout: int = 30):
 
 
 class GitLabProvider(BaseProvider):
+    url_pattern = re.compile(
+        r"^https?://gitlab\.com/(.+?)/-/merge_requests/(\d+)(?:/.*)?$"
+    )
+
+    @property
+    def fetch_ref_template(self) -> str:
+        return "merge-requests/{id}/head"
+
+    @classmethod
+    def _extract_remote_repo(cls, remote_url: str) -> Optional[str]:
+        m = re.search(r"gitlab\.com[:/](.+?)\.git$", remote_url)
+        if m:
+            return m.group(1)
+        m = re.search(r"gitlab\.com/(.+?)$", remote_url)
+        if m:
+            return m.group(1).rstrip("/")
+        return None
     def fetch_mr_info(self, repo: str, mr_number: str) -> dict:
         encoded = repo.replace("/", "%2F")
         r = _glab(

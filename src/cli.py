@@ -8,7 +8,7 @@ from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-from src.git import eprint, run, find_project_dir, checkout_mr, get_local_diff
+from src.git import eprint, find_project_dir, checkout_mr, get_local_diff
 from src.providers.base import BaseProvider
 from src.analyzers.patterns import analyze_patterns
 from src.formatters.markdown import MarkdownFormatter
@@ -16,38 +16,20 @@ from src.formatters.json import JsonFormatter
 
 from src.__version__ import __version__
 
-URL_PATTERN = re.compile(
-    r"^https?://gitlab\.com/(.+?)/-/merge_requests/(\d+)(?:/.*)?$"
-)
 
-
-def _detect_repo_from_git() -> Optional[str]:
-    r = run(["git", "remote", "get-url", "origin"])
-    if r.returncode != 0:
-        return None
-    url = r.stdout.strip()
-    m = re.search(r"gitlab\.com[:/](.+?)\.git$", url)
-    if m:
-        return m.group(1)
-    m = re.search(r"gitlab\.com/(.+?)$", url)
-    if m:
-        return m.group(1).rstrip("/")
-    return None
-
-
-def _parse_input(raw: str) -> tuple[str, str]:
-    m = URL_PATTERN.match(raw.strip())
-    if m:
-        return m.group(1), m.group(2)
+def _parse_input(raw: str) -> tuple[BaseProvider, str, str]:
+    result = BaseProvider.resolve_from_url(raw)
+    if result:
+        return result
     if re.match(r"^\d+$", raw.strip()):
-        mr_number = raw.strip()
-        repo = _detect_repo_from_git()
-        if not repo:
+        mr_id = raw.strip()
+        result = BaseProvider.resolve_from_remote()
+        if not result:
             eprint("Error: could not detect repo from git remote")
             eprint("Use a full URL instead:")
             eprint("  git-review-cli https://gitlab.com/org/project/-/merge_requests/N")
             sys.exit(1)
-        return repo, mr_number
+        return result[0], result[1], mr_id
     eprint(f"Error: unrecognised input: {raw}")
     eprint("Expected: https://gitlab.com/org/project/-/merge_requests/N  or  <MR-number>")
     sys.exit(1)
@@ -91,16 +73,14 @@ def main():
         sys.exit(1)
     depth = "deep" if args.deep else ("caveman" if args.caveman else "standard")
 
-    repo, mr_number = _parse_input(args.input)
+    provider, repo, mr_id = _parse_input(args.input)
 
-    provider = BaseProvider.resolve(repo)
-    eprint(f"Fetching MR !{mr_number} from {repo}...")
-
-    info = provider.fetch_mr_info(repo, mr_number)
+    eprint(f"Fetching MR !{mr_id} from {repo}...")
+    info = provider.fetch_mr_info(repo, mr_id)
     base_branch = args.base or info.get("target_branch", "main")
-    diff_data = provider.fetch_mr_diff(repo, mr_number)
-    commits = provider.fetch_mr_commits(repo, mr_number)
-    notes = provider.fetch_mr_notes(repo, mr_number)
+    diff_data = provider.fetch_mr_diff(repo, mr_id)
+    commits = provider.fetch_mr_commits(repo, mr_id)
+    notes = provider.fetch_mr_notes(repo, mr_id)
 
     commit_shas = [c.get("id", "") for c in commits if c.get("id")]
 
@@ -108,11 +88,11 @@ def main():
     if project_dir:
         eprint(f"Found local clone: {project_dir}")
         eprint(f"Checking out MR branch (base: {base_branch})...")
-        checkout_mr(project_dir, mr_number, base_branch)
+        checkout_mr(project_dir, mr_id, base_branch, provider.fetch_ref_template)
 
         if not diff_data:
             eprint("API diff empty — falling back to local git diff...")
-            diff_data = get_local_diff(project_dir, mr_number, base_branch)
+            diff_data = get_local_diff(project_dir, mr_id, base_branch)
     else:
         eprint("No local clone found — skipping ownership verification")
 
@@ -132,7 +112,7 @@ def main():
         commits=commits,
         notes=notes,
         project_dir=project_dir,
-        mr_number=mr_number,
+        mr_number=mr_id,
         base_branch=base_branch,
         depth=depth,
         review_file=args.post,
@@ -142,7 +122,7 @@ def main():
     print(output)
 
     if args.post:
-        provider.post_review(repo, mr_number, args.post)
+        provider.post_review(repo, mr_id, args.post)
 
 
 if __name__ == "__main__":

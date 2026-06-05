@@ -49,21 +49,22 @@ def find_project_dir(repo: str, base: Optional[Path] = None) -> Optional[str]:
     return None
 
 
-def checkout_mr(project_dir: str, mr_number: str, base_branch: str) -> bool:
+def checkout_mr(project_dir: str, mr_number: str, base_branch: str, ref_template: str = "merge-requests/{id}/head") -> bool:
     branch = f"mr-{mr_number}"
+    fetch_ref = ref_template.format(id=mr_number)
     r = run_in_project(project_dir, ["git", "branch", "--show-current"])
     currently_on = r.stdout.strip() if r.returncode == 0 else ""
 
     if currently_on == branch:
-        r1 = run_in_project(
+        run_in_project(
             project_dir,
-            ["git", "fetch", "--force", "origin", f"merge-requests/{mr_number}/head"],
+            ["git", "fetch", "--force", "origin", fetch_ref],
         )
         return True
 
     r1 = run_in_project(
         project_dir,
-        ["git", "fetch", "--force", "origin", f"merge-requests/{mr_number}/head:{branch}"],
+        ["git", "fetch", "--force", "origin", f"{fetch_ref}:{branch}"],
     )
     if r1.returncode != 0:
         eprint(f"Warning: git fetch for MR {mr_number} failed: {r1.stderr.strip()}")
