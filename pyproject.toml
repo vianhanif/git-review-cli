@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [project.scripts]
-git-review-cli = "git_review_cli.cli:main"
+git-review-cli = "src.cli:main"
 
 [build-system]
 requires = ["setuptools>=64"]
@@ -27,4 +27,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["git_review_cli*"]
+include = ["*"]

@@ -8,8 +8,24 @@ file ownership verification, and outputs structured markdown or JSON.
 ## Architecture
 
 ```
-git_review_cli/
+src/
 ├── cli.py              # CLI entry point
+├── git.py              # Shared git operations
+├── providers/          # Code forge backends
+│   ├── base.py         # Abstract provider interface
+│   └── gitlab.py       # GitLab via glab CLI
+├── formatters/         # Output plugins
+│   ├── base.py         # Abstract formatter interface
+│   ├── markdown.py     # Full / caveman markdown
+│   └── json.py         # Machine-readable JSON
+├── analyzers/          # Analysis plugins
+│   ├── base.py         # Abstract analyzer interface
+│   ├── ownership.py    # File ownership verification
+│   └── patterns.py     # Pattern-based findings
+└── __version__.py
+```
+├── src/                 # Package source
+│   ├── cli.py           # CLI entry point
 ├── git.py              # Shared git operations
 ├── providers/          # Code forge backends
 │   ├── base.py         # Abstract provider interface
@@ -46,7 +62,7 @@ pip install git+https://github.com/username/git-review-cli.git
 Or symlink directly into your PATH:
 
 ```bash
-ln -s $(pwd)/src/git_review_cli/cli.py ~/.local/bin/git-review-cli
+ln -s $(pwd)/src/cli.py ~/.local/bin/git-review-cli
 ```
 
 ## Usage

@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from ..git import run, eprint
+from src.git import run, eprint
 from .base import BaseProvider
 
 

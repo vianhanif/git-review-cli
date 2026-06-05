@@ -1,6 +1,6 @@
 from typing import Optional
 
-from ..git import run_in_project
+from src.git import run_in_project
 
 
 _TOUCHED_CACHE: dict[str, dict[str, int]] = {}

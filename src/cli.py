@@ -1,15 +1,20 @@
+#!/usr/bin/env python3
 import argparse
+import os
 import re
 import sys
 import textwrap
 from typing import Optional
 
-from .__version__ import __version__
-from .git import eprint, run, find_project_dir, checkout_mr, get_local_diff
-from .providers.base import BaseProvider
-from .analyzers.patterns import analyze_patterns
-from .formatters.markdown import MarkdownFormatter
-from .formatters.json import JsonFormatter
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from src.git import eprint, run, find_project_dir, checkout_mr, get_local_diff
+from src.providers.base import BaseProvider
+from src.analyzers.patterns import analyze_patterns
+from src.formatters.markdown import MarkdownFormatter
+from src.formatters.json import JsonFormatter
+
+__version__ = "1.0.0"
 
 URL_PATTERN = re.compile(
     r"^https?://gitlab\.com/(.+?)/-/merge_requests/(\d+)(?:/.*)?$"

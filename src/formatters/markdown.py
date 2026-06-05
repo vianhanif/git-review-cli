@@ -1,8 +1,8 @@
 import os
 from typing import Optional
 
-from ..analyzers.ownership import check_file_ownership
-from ..analyzers.patterns import is_excluded, CONFIG_PATTERNS
+from src.analyzers.ownership import check_file_ownership
+from src.analyzers.patterns import is_excluded, CONFIG_PATTERNS
 from .base import BaseFormatter
 
 
