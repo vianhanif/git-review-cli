@@ -1,7 +1,7 @@
 [project]
-name = "opencode-glab-review"
+name = "git-review-cli"
 version = "1.0.0"
-description = "Standardized GitLab MR data gatherer for OpenCode"
+description = "Review GitLab merge requests from the command line"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.8"
@@ -19,11 +19,11 @@ classifiers = [
 ]
 
 [project.scripts]
-opencode-glab-review = "opencode_glab_review:main"
+git-review-cli = "git_review_cli.cli:main"
 
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-py-modules = ["opencode_glab_review"]
+[tool.setuptools.packages.find]
+include = ["git_review_cli*"]
