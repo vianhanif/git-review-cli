@@ -1,5 +1,10 @@
 # git-review-cli
 
+[![Tests](https://github.com/vianhanif/git-review-cli/actions/workflows/tests.yml/badge.svg)](https://github.com/vianhanif/git-review-cli/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/git-review-cli)](https://pypi.org/project/git-review-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/git-review-cli)](https://pypi.org/project/git-review-cli/)
+[![License](https://img.shields.io/pypi/l/git-review-cli)](https://github.com/vianhanif/git-review-cli/blob/main/LICENSE)
+
 Provider-agnostic code review toolkit. Gathers merge/pull request data, verifies
 file ownership, runs analysis, and outputs structured reports — all from the CLI.
 
@@ -109,7 +114,7 @@ src/
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.9+
 - [glab](https://gitlab.com/gitlab-org/cli) (`brew install glab`)
 - Authenticated to GitLab (`glab auth login`)
 
@@ -117,12 +122,6 @@ src/
 
 ```bash
 pip install git-review-cli
-```
-
-Or symlink directly into your PATH:
-
-```bash
-ln -s $(pwd)/src/cli.py ~/.local/bin/git-review-cli
 ```
 
 ## Usage
@@ -179,24 +178,6 @@ cat > /tmp/review-123.md << 'REVIEW'
 REVIEW
 git-review-cli 123 --post /tmp/review-123.md
 ```
-
-## Output
-
-The default markdown output includes:
-
-- MR metadata (title, author, state, branches, description)
-- Commit list
-- Changed files table with ownership verification (owned / not owned / excluded)
-- Existing comments summary
-- `--deep` adds categorized findings (large changes, config changes, missing tests)
-
-### File Ownership Verification
-
-| Tag | Meaning |
-|-----|---------|
-| N commit(s) | File was touched by N commits in this MR |
-| not owned | File exists in diff but not in any MR commit (branch drift) |
-| excluded | Noise file (lockfiles, binaries, etc.) |
 
 ## Exit Codes
 
