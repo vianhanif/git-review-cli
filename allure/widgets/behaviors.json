@@ -1,1 +1,1 @@
-{"total":19,"items":[]}
+{"total":2,"items":[{"uid":"c92e2e11038e4716a232d4eabd7663c1","name":"Analyzers","statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2}},{"uid":"02be0216080f1199e9023e21534b9cb9","name":"Formatters","statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2}}]}
