@@ -46,7 +46,7 @@ pip install git+https://github.com/username/git-review-cli.git
 Or symlink directly into your PATH:
 
 ```bash
-ln -s $(pwd)/git_review_cli/cli.py ~/.local/bin/git-review-cli
+ln -s $(pwd)/src/git_review_cli/cli.py ~/.local/bin/git-review-cli
 ```
 
 ## Usage
