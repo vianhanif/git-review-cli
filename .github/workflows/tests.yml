@@ -41,8 +41,13 @@ jobs:
     needs: test
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download all Allure results
         uses: actions/download-artifact@v4
         with:
@@ -50,14 +55,25 @@ jobs:
           pattern: allure-results-*
           merge-multiple: true
 
+      - name: Install Allure CLI
+        run: |
+          curl -sL https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz -o allure.tgz
+          tar -xzf allure.tgz
+
+      - name: Restore history
+        run: |
+          mkdir -p allure-history
+          if [ -d gh-pages/allure ]; then
+            cp -r gh-pages/allure/history allure-history/ || true
+            cp -r gh-pages/allure/executor.json allure-history/ || true
+          fi
+
       - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@v1
-        with:
-          allure_results: allure-results/
-          allure_history: allure-history/
+        run: |
+          ./allure-2.33.0/bin/allure generate allure-results/ -o allure-report --clean
+          cp -r allure-history/* allure-report/history/
 
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
