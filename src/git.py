@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_PROJECTS_BASE = Path.home() / "Documents" / "alvian"
+DEFAULT_PROJECTS_BASE = Path.cwd()
 
 
 def eprint(*args, **kwargs):
@@ -37,6 +37,10 @@ def find_project_dir(repo: str, base: Optional[Path] = None) -> Optional[str]:
     if not base.exists():
         return None
     project_name = repo.split("/")[-1]
+    if base.is_dir() and base.name == project_name:
+        git_dir = base / ".git"
+        if git_dir.exists() or (base / "HEAD").exists():
+            return str(base)
     for d in base.iterdir():
         if d.is_dir() and d.name == project_name:
             git_dir = d / ".git"

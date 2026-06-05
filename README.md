@@ -127,27 +127,57 @@ ln -s $(pwd)/src/cli.py ~/.local/bin/git-review-cli
 
 ## Usage
 
-```bash
-# Full MR URL
-git-review-cli https://gitlab.com/org/project/-/merge_requests/123
+### Arguments
 
-# Shorthand (auto-detects repo from git remote)
+```
+git-review-cli <input> [options]
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `input` | Yes | Full MR URL (`https://gitlab.com/org/repo/-/merge_requests/123`) or just the MR number (`123`) for shorthand mode |
+
+Shorthand mode auto-detects the repo from the current directory's `git remote get-url origin`. Works from any GitLab repo clone.
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Output raw JSON instead of markdown. Useful for piping into `jq` or feeding to other tools. Contains MR metadata, commits, and changed files with additions/deletions. |
+| `--caveman` | Concise markdown output. Skips commit list, skips deep analysis. Just MR metadata + changed files table. Ideal for quick scans. |
+| `--deep` | Full analysis markdown output. Includes commit list, categorized findings (large changes, config/infra changes, missing tests, all changes grouped by category). Mutually exclusive with `--caveman`. |
+| `--post <file>` | Post the contents of a markdown file as a comment on the MR. The file is read as-is and posted via `glab mr note`. The review file content is also appended to stdout so you can review before posting. |
+| `--base <branch>` | Override the base branch for git diff operations. Defaults to the MR's target branch from the API. Useful when the target branch differs from what's configured in the remote (e.g., a custom `release/` branch). |
+| `--version` | Print version and exit. |
+
+### Examples
+
+```bash
+# Full MR URL — works from any directory
+git-review-cli https://gitlab.com/org/repo/-/merge_requests/123
+
+# Shorthand number — auto-detects repo from git origin
 git-review-cli 123
 
-# Modes
-git-review-cli 123 --caveman    # concise output
-git-review-cli 123 --deep       # full analysis with findings
-git-review-cli 123 --json       # machine-readable output
+# Quick scan, no fluff
+git-review-cli 123 --caveman
 
-# Override base branch
-git-review-cli 123 --base main
+# Deep dive with analysis
+git-review-cli 123 --deep
 
-# Post a review note to the MR
-cat > /tmp/review.md << 'REVIEW'
+# JSON for scripting
+git-review-cli 123 --json | jq .files[].path
+
+# Custom base branch
+git-review-cli 123 --base release/2026-q3
+
+# Write and post a review in one step
+cat > /tmp/review-123.md << 'REVIEW'
 ## Review findings
-- Looks good overall
+- Tests cover the new endpoint
+- Consider extracting the helper to a shared module
 REVIEW
-git-review-cli 123 --post /tmp/review.md
+git-review-cli 123 --post /tmp/review-123.md
 ```
 
 ## Output
@@ -183,17 +213,12 @@ The default markdown output includes:
 - [ ] **GitHub provider** — `gh` CLI backend. Implements `BaseProvider` to fetch PR
   metadata, diffs, commits, and reviews. All existing formatters, analyzers, and
   CLI flags work unchanged. Estimated: ~80 lines of new code.
-
-- [ ] **Unified CLI** — auto-detect forge from remote URL or git config.
-  `git-review-cli 123` works from any repo without `--provider` flag, regardless
-  of whether it's hosted on GitLab or GitHub.
-
 - [ ] **Rich terminal output** — `--rich` flag renders the report directly in the
   terminal with colored tables, dimmed metadata, and syntax-highlighted diff
   snippets. Useful for quick reviews without leaving the shell.
 
 - [ ] **Config file** — `~/.config/git-review-cli/config.yaml` for user defaults:
-  projects base path (currently hardcoded to `~/Documents/alvian/`), default
+  projects base path (defaults to current directory), default
   base branch, excluded file patterns, preferred formatter, and provider
   preferences.
 
