@@ -32,6 +32,18 @@ Issues = "https://github.com/alvian/git-review-cli/issues"
 [project.scripts]
 git-review-cli = "git_review_cli.cli:main"
 
+[project.optional-dependencies]
+test = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "allure-pytest>=2.13",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "--alluredir=allure-results -v"
+
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"

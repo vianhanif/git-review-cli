@@ -12,3 +12,8 @@ dist/
 build/
 *.whl
 *.egg-info/
+
+allure-results/
+allure-report/
+allure-history/
+.pytest_cache/
