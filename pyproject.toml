@@ -1,25 +1,36 @@
 [project]
 name = "git-review-cli"
 version = "1.0.0"
-description = "Review GitLab merge requests from the command line"
+description = "Provider-agnostic code review toolkit for GitLab merge requests"
 readme = "README.md"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
+authors = [
+    { name = "Alvian", email = "pid.alvian@gmail.com" },
+]
 requires-python = ">=3.9"
+keywords = ["gitlab", "merge-request", "code-review", "cli", "glab"]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Code Review",
 ]
 
+[project.urls]
+Homepage = "https://github.com/alvian/git-review-cli"
+Repository = "https://github.com/alvian/git-review-cli"
+Issues = "https://github.com/alvian/git-review-cli/issues"
+
 [project.scripts]
-git-review-cli = "src.cli:main"
+git-review-cli = "git_review_cli.cli:main"
 
 [build-system]
 requires = ["setuptools>=64"]
@@ -27,4 +38,3 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["*"]

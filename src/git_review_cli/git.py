@@ -3,9 +3,6 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_PROJECTS_BASE = Path.cwd()
-
-
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -31,9 +28,13 @@ def run_in_project(project_dir: str, args: list[str], **kwargs):
     )
 
 
+def _default_base() -> Path:
+    return Path.cwd()
+
+
 def find_project_dir(repo: str, base: Optional[Path] = None) -> Optional[str]:
     if base is None:
-        base = DEFAULT_PROJECTS_BASE
+        base = _default_base()
     if not base.exists():
         return None
     project_name = repo.split("/")[-1]

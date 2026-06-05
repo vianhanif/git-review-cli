@@ -116,7 +116,7 @@ src/
 ## Installation
 
 ```bash
-pip install git+https://github.com/username/git-review-cli.git
+pip install git-review-cli
 ```
 
 Or symlink directly into your PATH:

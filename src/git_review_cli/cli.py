@@ -1,20 +1,14 @@
-#!/usr/bin/env python3
 import argparse
-import os
 import re
 import sys
 import textwrap
-from typing import Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-from src.git import eprint, find_project_dir, checkout_mr, get_local_diff
-from src.providers.base import BaseProvider
-from src.analyzers.patterns import analyze_patterns
-from src.formatters.markdown import MarkdownFormatter
-from src.formatters.json import JsonFormatter
-
-from src.__version__ import __version__
+from .git import eprint, find_project_dir, checkout_mr, get_local_diff
+from .providers.base import BaseProvider
+from .analyzers.patterns import analyze_patterns
+from .formatters.markdown import MarkdownFormatter
+from .formatters.json import JsonFormatter
+from .__version__ import __version__
 
 
 def _parse_input(raw: str) -> tuple[BaseProvider, str, str]:

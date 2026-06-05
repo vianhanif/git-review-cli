@@ -1,7 +1,7 @@
 from typing import Optional
 
-from src.analyzers.ownership import check_file_ownership
-from src.analyzers.patterns import is_excluded
+from ..analyzers.ownership import check_file_ownership
+from ..analyzers.patterns import is_excluded
 from .base import BaseFormatter
 
 
