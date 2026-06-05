@@ -3,7 +3,8 @@ name = "git-review-cli"
 version = "1.0.0"
 description = "Provider-agnostic code review toolkit for GitLab merge requests"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Alvian", email = "pid.alvian@gmail.com" },
 ]
@@ -13,7 +14,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -21,7 +21,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Topic :: Software Development :: Code Review",
 ]
 
 [project.urls]
