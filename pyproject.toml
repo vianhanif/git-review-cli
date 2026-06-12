@@ -1,6 +1,6 @@
 [project]
 name = "git-review-cli"
-version = "1.0.0"
+version = "1.0.6"
 description = "Provider-agnostic code review toolkit for GitLab merge requests"
 readme = "README.md"
 license = "MIT"
