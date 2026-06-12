@@ -108,8 +108,14 @@ class GitLabProvider(BaseProvider):
         if not glab_bin:
             eprint("Error: glab not found — cannot post review")
             sys.exit(4)
+        try:
+            file_content = Path(filepath).read_text()
+        except FileNotFoundError:
+            eprint(f"Error: review file not found: {filepath}")
+            sys.exit(4)
         r = run(
-            [glab_bin, "mr", "note", mr_number, "-R", repo, "-F", filepath],
+            [glab_bin, "mr", "note", mr_number, "-R", repo],
+            input=file_content,
             timeout=30,
         )
         if r.returncode != 0:
